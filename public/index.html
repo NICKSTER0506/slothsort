@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🦥 SlothSort — The Lazy Autonomous File Tidier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+    .animate-sloth { animation: float 5s ease-in-out infinite; }
+  </style>
+</head>
+<body class="bg-amber-50/40 text-stone-800 min-h-screen flex flex-col antialiased selection:bg-amber-200">
+
+  <!-- Header -->
+  <header class="border-b border-amber-200/60 bg-white/70 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-2xl shadow-inner animate-sloth">
+          🦥
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-extrabold text-stone-900 tracking-tight text-lg">SlothSort</h1>
+            <span class="text-xs bg-amber-100 text-amber-900 font-semibold px-2 py-0.5 rounded-full border border-amber-300">Slow & Steady</span>
+          </div>
+          <p class="text-xs text-stone-500">International Sloth Day • Built with Open-Source AI</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 text-xs font-medium">
+        <div id="aiEngineBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="engineText">Detecting Local AI...</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full space-y-8">
+    
+    <!-- Sloth Wisdom Banner -->
+    <div class="bg-gradient-to-r from-amber-100/90 via-orange-50 to-amber-50 border border-amber-200/80 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="space-y-2 max-w-xl">
+        <div class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-800 bg-amber-200/60 px-2.5 py-1 rounded-md">
+          <span>💤</span> The Sloth Philosophy
+        </div>
+        <h2 class="text-2xl font-black text-stone-900 tracking-tight">Do Nothing. Let Local Open AI Sort Your Clutter.</h2>
+        <p class="text-stone-600 text-sm leading-relaxed">
+          Sloths move at 0.15 mph to conserve energy. SlothSort runs low-priority local open-weight AI so your laptop fan stays silent and your personal bank statements, tax docs, and photos never leak to the cloud.
+        </p>
+      </div>
+
+      <!-- Sloth Stat Pill -->
+      <div class="grid grid-cols-2 gap-3 w-full md:w-auto shrink-0 text-center">
+        <div class="bg-white/80 border border-amber-200 p-3 rounded-xl shadow-xs">
+          <div class="text-2xl font-black text-amber-700">100%</div>
+          <div class="text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Energy Saved</div>
+        </div>
+        <div class="bg-white/80 border border-amber-200 p-3 rounded-xl shadow-xs">
+          <div class="text-2xl font-black text-emerald-700">$0.00</div>
+          <div class="text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Cloud Bill</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive Workspace Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- Left Column: Source Folder / Clutter Zone (5 cols) -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="bg-white rounded-2xl border border-stone-200/80 p-5 shadow-xs">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-stone-900 text-sm flex items-center gap-2">
+              <span>📂</span> Cluttered Folder
+            </h3>
+            <span id="fileCountBadge" class="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full font-mono font-medium">8 files</span>
+          </div>
+
+          <!-- File List Preview -->
+          <div id="fileList" class="space-y-2 max-h-[360px] overflow-y-auto pr-1 text-xs">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="pt-4 mt-4 border-t border-stone-100 flex flex-col gap-2">
+            <button id="btnTidy" onclick="runSlothTidy(false)" class="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 group">
+              <span class="text-lg group-hover:scale-125 transition-transform">🦥</span>
+              <span>Tidy at Sloth Pace</span>
+            </button>
+            <div class="flex items-center justify-between px-1 text-[11px] text-stone-500">
+              <label class="flex items-center gap-1.5 cursor-pointer">
+                <input type="checkbox" id="checkSlowPace" checked class="accent-amber-600 rounded">
+                <span>Slow & Steady mode (quieter fan)</span>
+              </label>
+              <button onclick="resetDemo()" class="hover:text-stone-900 underline">Reset Clutter</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Why Open Source Card -->
+        <div class="bg-emerald-50/60 border border-emerald-200/70 rounded-2xl p-4 text-xs text-emerald-900 space-y-2">
+          <div class="font-bold flex items-center gap-1.5 text-emerald-950">
+            <span>🛡️</span> Why Open Innovation Matters Here
+          </div>
+          <p class="leading-relaxed text-stone-600">
+            Downloads folders contain W-2 tax forms, bank receipts, ID scans, and private keys. Proprietary cloud APIs demand you upload all your files to their servers. Open-weight models (Llama 3.2, Qwen, SmolLM) run 100% on your laptop. Zero data transfer, zero internet needed.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Column: Organized Categories (7 cols) -->
+      <div class="lg:col-span-7 space-y-4">
+        <div class="bg-white rounded-2xl border border-stone-200/80 p-5 shadow-xs">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-bold text-stone-900 text-sm flex items-center gap-2">
+                <span>✨</span> The Sloth Organizers
+              </h3>
+              <p class="text-xs text-stone-500">Semantic folders created automatically</p>
+            </div>
+            <div id="statusIndicator" class="text-xs px-2.5 py-1 rounded-full bg-stone-100 text-stone-600 font-medium">
+              Idle (Resting)
+            </div>
+          </div>
+
+          <!-- Category Buckets -->
+          <div id="categoryGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Receipts -->
+            <div class="border border-stone-200/70 rounded-xl p-3 bg-stone-50/50" data-cat="Receipts & Invoices">
+              <div class="flex items-center justify-between text-xs font-bold text-stone-800 mb-2">
+                <span class="flex items-center gap-1.5">🧾 Receipts & Invoices</span>
+                <span class="cat-count font-mono text-[10px] bg-stone-200 px-1.5 py-0.5 rounded text-stone-700">0</span>
+              </div>
+              <div class="cat-items space-y-1.5 min-h-[50px] text-[11px] text-stone-500">
+                <span class="italic text-stone-400 block py-3 text-center">Empty bucket</span>
+              </div>
+            </div>
+
+            <!-- Work & Docs -->
+            <div class="border border-stone-200/70 rounded-xl p-3 bg-stone-50/50" data-cat="Work & Documents">
+              <div class="flex items-center justify-between text-xs font-bold text-stone-800 mb-2">
+                <span class="flex items-center gap-1.5">📄 Work & Documents</span>
+                <span class="cat-count font-mono text-[10px] bg-stone-200 px-1.5 py-0.5 rounded text-stone-700">0</span>
+              </div>
+              <div class="cat-items space-y-1.5 min-h-[50px] text-[11px] text-stone-500">
+                <span class="italic text-stone-400 block py-3 text-center">Empty bucket</span>
+              </div>
+            </div>
+
+            <!-- Memes & Photos -->
+            <div class="border border-stone-200/70 rounded-xl p-3 bg-stone-50/50" data-cat="Memes & Photos">
+              <div class="flex items-center justify-between text-xs font-bold text-stone-800 mb-2">
+                <span class="flex items-center gap-1.5">🖼️ Memes & Photos</span>
+                <span class="cat-count font-mono text-[10px] bg-stone-200 px-1.5 py-0.5 rounded text-stone-700">0</span>
+              </div>
+              <div class="cat-items space-y-1.5 min-h-[50px] text-[11px] text-stone-500">
+                <span class="italic text-stone-400 block py-3 text-center">Empty bucket</span>
+              </div>
+            </div>
+
+            <!-- Code & Configs -->
+            <div class="border border-stone-200/70 rounded-xl p-3 bg-stone-50/50" data-cat="Code & Configs">
+              <div class="flex items-center justify-between text-xs font-bold text-stone-800 mb-2">
+                <span class="flex items-center gap-1.5">💻 Code & Configs</span>
+                <span class="cat-count font-mono text-[10px] bg-stone-200 px-1.5 py-0.5 rounded text-stone-700">0</span>
+              </div>
+              <div class="cat-items space-y-1.5 min-h-[50px] text-[11px] text-stone-500">
+                <span class="italic text-stone-400 block py-3 text-center">Empty bucket</span>
+              </div>
+            </div>
+
+            <!-- Installers -->
+            <div class="border border-stone-200/70 rounded-xl p-3 bg-stone-50/50" data-cat="Installers & Archives">
+              <div class="flex items-center justify-between text-xs font-bold text-stone-800 mb-2">
+                <span class="flex items-center gap-1.5">📦 Installers & Archives</span>
+                <span class="cat-count font-mono text-[10px] bg-stone-200 px-1.5 py-0.5 rounded text-stone-700">0</span>
+              </div>
+              <div class="cat-items space-y-1.5 min-h-[50px] text-[11px] text-stone-500">
+                <span class="italic text-stone-400 block py-3 text-center">Empty bucket</span>
+              </div>
+            </div>
+
+            <!-- Misc -->
+            <div class="border border-stone-200/70 rounded-xl p-3 bg-stone-50/50" data-cat="Misc & Notes">
+              <div class="flex items-center justify-between text-xs font-bold text-stone-800 mb-2">
+                <span class="flex items-center gap-1.5">📝 Misc & Notes</span>
+                <span class="cat-count font-mono text-[10px] bg-stone-200 px-1.5 py-0.5 rounded text-stone-700">0</span>
+              </div>
+              <div class="cat-items space-y-1.5 min-h-[50px] text-[11px] text-stone-500">
+                <span class="italic text-stone-400 block py-3 text-center">Empty bucket</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sloth Changelog Log Box -->
+          <div id="slothLog" class="mt-4 p-3 bg-stone-900 text-stone-200 rounded-xl text-xs font-mono max-h-32 overflow-y-auto space-y-1">
+            <div class="text-stone-400">🦥 Sloth Log initialized. Click 'Tidy at Sloth Pace' to begin.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="border-t border-amber-200/60 bg-white/50 text-center py-4 text-xs text-stone-500">
+    Built for International Sloth Day 🦥 • Dev.to "Slow and Steady" Open-Source AI Challenge
+  </footer>
+
+  <script>
+    // Initial Cluttered State
+    const INITIAL_FILES = [
+      { name: "Screenshot_2024-10-19_at_03.14.22_AM.png", size: "1.4 MB", type: "Image" },
+      { name: "INV_9921_october_stripe_final(1).pdf", size: "142 KB", type: "PDF" },
+      { name: "docker-compose.prod.v2.backup.yml", size: "4 KB", type: "YAML" },
+      { name: "funny_cat_sloth_meme_discord.gif", size: "2.1 MB", type: "GIF" },
+      { name: "q3_financial_projection_preliminary_draft.docx", size: "88 KB", type: "Document" },
+      { name: "node_setup_x64_v20.10.0.exe", size: "32 MB", type: "Installer" },
+      { name: "quick_groceries_and_lazy_tasks.txt", size: "1 KB", type: "Text" },
+      { name: "health_insurance_tax_deduction_form.pdf", size: "210 KB", type: "PDF" }
+    ];
+
+    let currentFiles = [...INITIAL_FILES];
+
+    function renderFileList() {
+      const container = document.getElementById('fileList');
+      container.innerHTML = '';
+      currentFiles.forEach((file, index) => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between p-2 rounded-lg bg-stone-50 border border-stone-200/60 hover:border-amber-400 transition';
+        item.id = `raw-file-${index}`;
+        item.innerHTML = `
+          <div class="flex items-center gap-2 truncate">
+            <span class="text-stone-400 text-sm">📄</span>
+            <span class="font-mono text-stone-800 truncate">${file.name}</span>
+          </div>
+          <span class="text-[10px] text-stone-400 shrink-0 font-mono">${file.size}</span>
+        `;
+        container.appendChild(item);
+      });
+      document.getElementById('fileCountBadge').innerText = `${currentFiles.length} files`;
+    }
+
+    async function checkAiEngine() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        const badge = document.getElementById('engineText');
+        if (data.ollama && data.ollama.online) {
+          badge.innerText = `Ollama (${data.ollama.models[0] || 'Llama 3.2'}) Local`;
+        } else {
+          badge.innerText = `Local Semantic Open Engine (100% Offline)`;
+        }
+      } catch {
+        document.getElementById('engineText').innerText = `Client-Side Open AI Ready`;
+      }
+    }
+
+    async function runSlothTidy(isLive = false) {
+      const btn = document.getElementById('btnTidy');
+      const status = document.getElementById('statusIndicator');
+      const logBox = document.getElementById('slothLog');
+      const slowPace = document.getElementById('checkSlowPace').checked;
+
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+      status.innerText = "Sloth is working (slow & steady)...";
+      status.className = "text-xs px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 font-medium animate-pulse";
+
+      // Reset category containers
+      document.querySelectorAll('.cat-items').forEach(el => el.innerHTML = '');
+      document.querySelectorAll('.cat-count').forEach(el => el.innerText = '0');
+
+      logBox.innerHTML = `<div class="text-amber-300">🦥 SlothSort initiated. Please sit back and do nothing.</div>`;
+
+      for (let i = 0; i < currentFiles.length; i++) {
+        const file = currentFiles[i];
+        
+        // Highlight active raw file
+        const rawEl = document.getElementById(`raw-file-${i}`);
+        if (rawEl) rawEl.classList.add('border-amber-500', 'bg-amber-50');
+
+        // Request classification from server or local logic
+        let result;
+        try {
+          const res = await fetch('/api/classify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename: file.name })
+          });
+          result = await res.json();
+        } catch {
+          // Fallback
+          result = {
+            category: file.name.includes('.pdf') ? 'Receipts & Invoices' :
+                      file.name.includes('.exe') ? 'Installers & Archives' :
+                      file.name.includes('.yml') ? 'Code & Configs' :
+                      file.name.includes('.gif') || file.name.includes('.png') ? 'Memes & Photos' : 'Work & Documents',
+            suggestedName: `2026-10-clean-${file.name}`,
+            reason: 'Local fallback engine'
+          };
+        }
+
+        // Add to category box
+        const bucket = document.querySelector(`[data-cat="${result.category}"]`);
+        if (bucket) {
+          const itemsEl = bucket.querySelector('.cat-items');
+          const countEl = bucket.querySelector('.cat-count');
+          countEl.innerText = parseInt(countEl.innerText || 0) + 1;
+
+          const card = document.createElement('div');
+          card.className = "bg-white p-2 rounded-lg border border-amber-200 shadow-xs flex flex-col gap-0.5 animate-fadeIn";
+          card.innerHTML = `
+            <div class="font-mono text-stone-900 font-semibold truncate">🏷️ ${result.suggestedName}</div>
+            <div class="text-[10px] text-stone-400 truncate">from: ${file.name}</div>
+          `;
+          itemsEl.appendChild(card);
+        }
+
+        // Log entry
+        const logLine = document.createElement('div');
+        logLine.innerHTML = `<span class="text-emerald-400">[✓]</span> ${file.name} <span class="text-stone-400">→</span> <span class="text-amber-200">${result.category}/</span>`;
+        logBox.appendChild(logLine);
+        logBox.scrollTop = logBox.scrollHeight;
+
+        if (slowPace) {
+          await new Promise(r => setTimeout(r, 450)); // Sloth speed
+        }
+      }
+
+      status.innerText = "Done! Energy 100% Conserved 🦥";
+      status.className = "text-xs px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 font-medium";
+
+      const finishLine = document.createElement('div');
+      finishLine.className = "text-amber-400 font-bold mt-2 pt-2 border-t border-stone-800";
+      finishLine.innerHTML = "🎉 All done! 8 files organized while you napped. Zero cloud APIs touched.";
+      logBox.appendChild(finishLine);
+      logBox.scrollTop = logBox.scrollHeight;
+
+      btn.disabled = false;
+      btn.classList.remove('opacity-50');
+    }
+
+    function resetDemo() {
+      currentFiles = [...INITIAL_FILES];
+      renderFileList();
+      document.querySelectorAll('.cat-items').forEach(el => {
+        el.innerHTML = '<span class="italic text-stone-400 block py-3 text-center">Empty bucket</span>';
+      });
+      document.querySelectorAll('.cat-count').forEach(el => el.innerText = '0');
+      document.getElementById('statusIndicator').innerText = "Idle (Resting)";
+      document.getElementById('statusIndicator').className = "text-xs px-2.5 py-1 rounded-full bg-stone-100 text-stone-600 font-medium";
+    }
+
+    // Init
+    renderFileList();
+    checkAiEngine();
+  </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "slothsort",
+  "version": "1.0.0",
+  "description": "The zero-effort desktop & downloads tidier built with open-source AI. Built for International Sloth Day.",
+  "main": "slothsort.js",
+  "scripts": {
+    "start": "node server.js",
+    "sort": "node slothsort.js test-messy-folder",
+    "sort:apply": "node slothsort.js test-messy-folder --apply"
+  },
+  "keywords": [
+    "sloth",
+    "open-source-ai",
+    "file-organizer",
+    "ollama",
+    "local-ai",
+    "devto-hackathon"
+  ],
+  "author": "Sloth Developer",
+  "license": "MIT"
+}
